@@ -8,7 +8,7 @@ ARG API_URL
 # It uses a reverse proxy to serve the frontend statically and proxy to backend
 # from a single exposed port, expecting TLS termination to be handled at the
 # edge by the given platform.
-FROM python:3.13 AS builder
+FROM --platform=$BUILDPLATFORM python:3.13 AS builder
 
 RUN mkdir -p /app/.web
 RUN python -m venv /app/.venv
@@ -33,7 +33,7 @@ RUN REFLEX_API_URL=${API_URL:-http://localhost:$PORT} reflex export --loglevel d
 
 
 # Final image with only necessary files
-FROM python:3.13-slim
+FROM --platform=$BUILDPLATFORM python:3.13-slim
 
 # Install Caddy and redis server inside image
 RUN apt-get update -y && apt-get install -y caddy redis-server && rm -rf /var/lib/apt/lists/*
